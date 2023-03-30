@@ -1,0 +1,45 @@
+server:
+  max-http-header-size: 2MB
+  servlet:
+    context-path: /pc
+spring:
+  profiles:
+    active: test
+  resources:
+    static-locations:
+      - classpath:/static
+      - classpath:/public
+      - classpath:/resources
+      - classpath:/META-INF/resources
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    filters: stat,wall,log4j
+    logSlowSql: true
+logging:
+  kafka: 27.128.235.90:12001,27.128.235.90:12002,27.128.235.90:12003
+  level:
+    root: info
+shiro_redis_cache: 3600000
+shiro_redis_session: 3600000
+mybatis_redis_cache: 3600000
+redis_session_name: sessionid
+
+sa-token:
+  token-name: satoken-client
+  sso:
+    isHttp: true
+    is-slo: true
+
+business-center:
+  clientcode: bc

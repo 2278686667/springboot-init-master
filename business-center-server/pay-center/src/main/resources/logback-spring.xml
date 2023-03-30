@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan: 当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。 scanPeriod: 设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。 
+	debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 configuration 
+	子节点为 appender、logger、root -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+	<!-- 	<property name="LOG_PATH" value="./logs" />
+        <property name="LOG_CONTEXT" value="/test" />
+        <property name="LOG_ENV" value="test" />
+        <property name="LOG_PATTERN"
+            value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+        <property name="LOG_MAXFILESIZE" value="10MB" />
+     -->
+	<springProperty scope="context" name="LOG_PATH" source="logging.path"
+					defaultValue="./logs" />
+	<springProperty scope="context" name="LOG_CONTEXT"
+					source="server.servlet.context-path" />
+	<springProperty scope="context" name="LOG_ENV"
+					source="spring.profiles.active"/>
+	<springProperty scope="context" name="LOG_PATTERN"
+					source="logging.pattern" defaultValue="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+	<springProperty scope="context" name="LOG_MAXFILESIZE"
+					source="logging.max-file-size" defaultValue="10MB" />
+	<springProperty scope="context" name="LOG_KAFKA"
+					source="logging.kafka"/>
+
+
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE_DEBUG"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_PATH}${LOG_CONTEXT}/%d{yyyy-MM-dd}/debug.%i.log
+			</FileNamePattern>
+			<maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<appender name="FILE_INFO"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_PATH}${LOG_CONTEXT}/%d{yyyy-MM-dd}/info.%i.log
+			</FileNamePattern>
+			<maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<appender name="FILE_WARN"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_PATH}${LOG_CONTEXT}/%d{yyyy-MM-dd}/warn.%i.log
+			</FileNamePattern>
+			<maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<appender name="FILE_ERROR"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<FileNamePattern>${LOG_PATH}${LOG_CONTEXT}/%d{yyyy-MM-dd}/error.%i.log
+			</FileNamePattern>
+			<maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+			<charset class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+
+	<appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+		<encoder>
+			<pattern>${LOG_CONTEXT}|#-#|%logger{15}|#-#|%thread|#-#|%date|#-#|%level|#-#|%msg</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<topic>elk-channel</topic>
+		<keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+		<deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+		<producerConfig>bootstrap.servers=${LOG_KAFKA}</producerConfig>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<appender-ref ref="Console" />
+	</appender>
+
+	<appender name="kafkaAppender_Async" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="kafkaAppender" />
+	</appender>
+
+	<logger name="com.zhby" level="DEBUG" additivity="false">
+		<appender-ref ref="Console" />
+		<if condition='!property("LOG_ENV").contains("prod")'>
+			<then>
+				<appender-ref ref="FILE_DEBUG" />
+			</then>
+		</if>
+		<appender-ref ref="kafkaAppender_Async" />
+		<appender-ref ref="FILE_INFO" />
+		<appender-ref ref="FILE_WARN" />
+		<appender-ref ref="FILE_ERROR" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="Console" />
+	</root>
+</configuration>

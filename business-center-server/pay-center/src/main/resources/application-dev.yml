@@ -1,0 +1,46 @@
+server:
+  port: 21003
+spring:
+  rabbitmq:
+    host: 192.168.1.3
+    port: 5672
+    username: admin
+    password: admin
+  # redis配置
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 0
+    # Redis服务器地址
+    host: 192.168.1.3
+    # Redis服务器连接端口
+    port: 6379
+    password: 123456
+  datasource:
+    url: jdbc:oracle:thin:@192.168.1.234:1521:ORCL
+    username: business_center
+    password: business_center
+
+interface:
+  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBdhBia0pAyMgR+oGU0UadfZ3HtD79q0JyQh45cM859P43KHhAw7Dp1HjC1IvqIX2FjM14oETAXtPYLvvk+WfT/QGJ6Z9pjjmhRcgNtT7R1iyyiHx8ulna9+i6hcfyi6we61irPigwkwdskBKHuvg4AuYFitWyrTLxF7c+UjOnyQIDAQAB
+  privateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIF2EGJrSkDIyBH6gZTRRp19nce0Pv2rQnJCHjlwzzn0/jcoeEDDsOnUeMLUi+ohfYWMzXigRMBe09gu++T5Z9P9AYnpn2mOOaFFyA21PtHWLLKIfHy6Wdr36LqFx/KLrB7rWKs+KDCTB2yQEoe6+DgC5gWK1bKtMvEXtz5SM6fJAgMBAAECgYAY62f1+d7+H2fbhhPBWJM2J4LieQCTBY8xvSZiOiO5bT4t0d1r4f9A00Q3hIA2HiIyPcsjR/5T5Szz9P9JsPRaILY2OeyrUHZHD821JWTmu8SbEIYiPoSzPMTNTKdoXyDG7taiSSFQM5WQpTCv/sVRoIu96eGIXN75gp3SREkYcQJBAP+SusuQRchmGeT7n9Bf8Zz+H4jz6iXsvVFiz7XMmHxnGaVIUm+pHoKC6jHfN1Gr55q1BIMNwRnXB2JylEOYRo0CQQCBrWpG+Pl/yDb+pQAa7lY3IBvFu/CLel9PYgRaOcs0SBVqJ3VdNP5H14ZE7bROUmoPe16heTNg7F+KDpr06IUtAkEA62Rv29I0E9HGg9smZTwZQ6njzbYqsWeNL4q9GQsqX1puiodENkgkK7z8i5a2UujsVtfnIfXnJy+gQ5KY8HEueQJAaB9kLGSRgSaz8bdu5DDnDRA8/IIxXOz/RnA/amrpXKtcdoYEWLjKS8kkSIhMtG68Nn4qt6DnvjVNaT7c8TUaaQJAHdbLjryVDVuaOB8AU48eJrtzPpKOTDYc98o0ThfTjkxgtqxJcdUmCrbL61WR6Zv0F8G1MH0xLgu2OemwlQJzBw==
+
+sa-token:
+  sso:
+    secretkey: kQwIOrYvnXmSDkwEiFngrKidMcdrgKor
+    slo-url: http://192.168.1.117:8081/uc/sso/logout
+    auth-url: http://192.168.1.117:8081/uc/sso/auth
+    check-ticket-url: http://192.168.1.117:8081/uc/sso/checkTicket
+    userinfo-url: http://192.168.1.117:8081/uc/sso/userinfo
+
+business-center:
+  pay:
+    payurl: http://192.168.1.117:8080/#/pay
+    invoiceurl: http://192.168.1.117:8080/#/invoice
+    payoffredirecturl: http://192.168.1.117:8080/#/pay/over
+    payoffnoticeurl: http://192.168.1.117:8080/pc/anon/pay/notice
+  user:
+    serverurl: http://192.168.1.117:8081/uc
+    clienturl: 192.168.1.117:9091
+    clientpath: /pc
+    sso-auth-path: /pc/sso-auth.html
+    sso-logout-call-url: http://192.168.1.117:8080/pc/sso/logoutcall
